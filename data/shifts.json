@@ -1,0 +1,23 @@
+[
+  {
+    "id": "shift-1",
+    "name": "Turno Manhã",
+    "viceDirectorId": "2",
+    "password": "manha123",
+    "createdAt": "2025-01-01T08:00:00.000Z"
+  },
+  {
+    "id": "shift-2",
+    "name": "Turno Tarde",
+    "viceDirectorId": "2",
+    "password": "tarde123",
+    "createdAt": "2025-01-01T14:00:00.000Z"
+  },
+  {
+    "id": "shift-3",
+    "name": "18:00 - 21:00",
+    "viceDirectorId": "2",
+    "password": "teste123",
+    "createdAt": "2025-01-01T20:00:00.000Z"
+  }
+]
