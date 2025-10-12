@@ -225,7 +225,7 @@ export default function Members() {
                     id="narniaName"
                     value={newUser.narniaName}
                     onChange={(e) => setNewUser({ ...newUser, narniaName: e.target.value })}
-                    placeholder="Nome na vida real"
+                    placeholder="Nome fora do jogo"
                   />
                 </div>
                 <div className="space-y-2">
