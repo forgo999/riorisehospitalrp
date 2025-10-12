@@ -220,12 +220,12 @@ export default function Members() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="narniaName">Nome Nárnia</Label>
+                  <Label htmlFor="narniaName">Nome Verdadeiro</Label>
                   <Input
                     id="narniaName"
                     value={newUser.narniaName}
                     onChange={(e) => setNewUser({ ...newUser, narniaName: e.target.value })}
-                    placeholder="Nome no roleplay"
+                    placeholder="Nome na vida real"
                   />
                 </div>
                 <div className="space-y-2">
