@@ -29,7 +29,7 @@
   {
     "id": "3",
     "accessCode": "CIR001",
-    "name": "Dra. Aguillar",
+    "name": "n/a",
     "role": "cirurgiao",
     "shiftId": "shift-3",
     "narniaName": "N/A",
@@ -39,7 +39,7 @@
     "id": "4",
     "accessCode": "TER001",
     "name": "Dr. Morgan_Bevelaqua",
-    "role": "terapeuta",
+    "role": "cirurgiao",
     "shiftId": "shift-3",
     "narniaName": "N/A",
     "phone": "N/A"
