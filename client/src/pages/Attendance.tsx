@@ -54,7 +54,10 @@ export default function Attendance() {
       return res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/attendance"] });
+      queryClient.invalidateQueries({ 
+        predicate: (query) => query.queryKey[0] === "/api/attendance" || 
+                               (typeof query.queryKey[0] === "string" && query.queryKey[0].startsWith("/api/attendance/"))
+      });
       toast({
         title: "Sucesso!",
         description: "Registro de chamada criado",
@@ -84,7 +87,10 @@ export default function Attendance() {
       return res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/attendance"] });
+      queryClient.invalidateQueries({ 
+        predicate: (query) => query.queryKey[0] === "/api/attendance" || 
+                               (typeof query.queryKey[0] === "string" && query.queryKey[0].startsWith("/api/attendance/"))
+      });
       toast({
         title: "Sucesso!",
         description: "Registro atualizado",
@@ -104,7 +110,10 @@ export default function Attendance() {
       await apiRequest("DELETE", `/api/attendance/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/attendance"] });
+      queryClient.invalidateQueries({ 
+        predicate: (query) => query.queryKey[0] === "/api/attendance" || 
+                               (typeof query.queryKey[0] === "string" && query.queryKey[0].startsWith("/api/attendance/"))
+      });
       toast({
         title: "Sucesso!",
         description: "Registro removido",
