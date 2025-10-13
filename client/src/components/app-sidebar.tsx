@@ -1,4 +1,4 @@
-import { Home, Clock, FileText, MessageSquare, Users, Calendar, LogOut } from "lucide-react";
+import { Home, Clock, FileText, MessageSquare, Users, Calendar, LogOut, ClipboardCheck, AlertTriangle, Settings } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -47,6 +47,24 @@ const menuItems = [
     title: "Membros",
     url: "/members",
     icon: Users,
+  },
+  {
+    title: "Chamada",
+    url: "/attendance",
+    icon: ClipboardCheck,
+    requireRole: [UserRole.VICE_DIRETOR, UserRole.DIRETOR, UserRole.ADMINISTRADOR],
+  },
+  {
+    title: "Advertências",
+    url: "/warnings",
+    icon: AlertTriangle,
+    requireRole: [UserRole.VICE_DIRETOR, UserRole.DIRETOR, UserRole.ADMINISTRADOR],
+  },
+  {
+    title: "Administração",
+    url: "/admin",
+    icon: Settings,
+    requireRole: [UserRole.DIRETOR, UserRole.ADMINISTRADOR],
   },
 ];
 
@@ -110,7 +128,10 @@ export function AppSidebar() {
           <SidebarGroupLabel>Menu Principal</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {menuItems.map((item) => (
+              {menuItems.filter(item => {
+                if (!item.requireRole) return true;
+                return item.requireRole.includes(user?.role as UserRole);
+              }).map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild

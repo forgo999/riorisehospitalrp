@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Users as UsersIcon, User, UserPlus } from "lucide-react";
+import { Users as UsersIcon, User, UserPlus, Trash2 } from "lucide-react";
 import { type User as UserType, type Shift, UserRole, type InsertUser } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
@@ -77,6 +77,7 @@ export default function Members() {
 
   const canSeeDetails = user?.role === UserRole.ADMINISTRADOR || user?.role === UserRole.DIRETOR || user?.role === UserRole.VICE_DIRETOR;
   const canAddUsers = user?.role === UserRole.ADMINISTRADOR || user?.role === UserRole.DIRETOR || user?.role === UserRole.VICE_DIRETOR;
+  const canDeleteUsers = user?.role === UserRole.ADMINISTRADOR || user?.role === UserRole.DIRETOR;
 
   const createUserMutation = useMutation({
     mutationFn: async (userData: InsertUser) => {
@@ -103,6 +104,26 @@ export default function Members() {
       toast({
         title: "Erro",
         description: "Não foi possível cadastrar o usuário",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteUserMutation = useMutation({
+    mutationFn: async (id: string) => {
+      await apiRequest("DELETE", `/api/users/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/users"] });
+      toast({
+        title: "Sucesso!",
+        description: "Usuário removido com sucesso",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Erro",
+        description: "Não foi possível remover o usuário",
         variant: "destructive",
       });
     },
@@ -301,6 +322,21 @@ export default function Members() {
                           )}
                         </div>
                       )}
+                      {canDeleteUsers && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="mt-2"
+                          onClick={() => {
+                            if (confirm(`Tem certeza que deseja remover ${member.name}?`)) {
+                              deleteUserMutation.mutate(member.id);
+                            }
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4 mr-1" />
+                          Remover
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </CardContent>
@@ -338,6 +374,21 @@ export default function Members() {
                       <Badge className={getRoleBadgeColor(member.role)} data-testid="badge-member-role">
                         {getRoleLabel(member.role)}
                       </Badge>
+                      {canDeleteUsers && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="mt-2"
+                          onClick={() => {
+                            if (confirm(`Tem certeza que deseja remover ${member.name}?`)) {
+                              deleteUserMutation.mutate(member.id);
+                            }
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4 mr-1" />
+                          Remover
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </CardContent>

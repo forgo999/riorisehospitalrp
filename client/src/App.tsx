@@ -13,6 +13,9 @@ import Rules from "@/pages/Rules";
 import MeCommands from "@/pages/MeCommands";
 import Members from "@/pages/Members";
 import Shift from "@/pages/Shift";
+import Attendance from "@/pages/Attendance";
+import Warnings from "@/pages/Warnings";
+import Admin from "@/pages/Admin";
 import NotFound from "@/pages/not-found";
 
 function ProtectedRoute({ component: Component }: { component: () => JSX.Element }) {
@@ -61,6 +64,9 @@ function Router() {
                 <Route path="/rules" component={Rules} />
                 <Route path="/me-commands" component={MeCommands} />
                 <Route path="/members" component={Members} />
+                <Route path="/attendance" component={Attendance} />
+                <Route path="/warnings" component={Warnings} />
+                <Route path="/admin" component={Admin} />
                 <Route path="/">
                   <Redirect to="/dashboard" />
                 </Route>
