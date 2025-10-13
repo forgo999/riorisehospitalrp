@@ -8,7 +8,9 @@ import {
   insertCovenantSchema,
   insertRuleSchema,
   insertMeCommandSchema,
-  passwordValidationSchema
+  passwordValidationSchema,
+  insertAttendanceRecordSchema,
+  insertWarningSchema
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -374,6 +376,156 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ message: "Erro ao deletar comando" });
+    }
+  });
+
+  // Attendance Routes
+  app.get("/api/attendance", async (req, res) => {
+    try {
+      const records = await storage.getAllAttendanceRecords();
+      res.json(records);
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao buscar registros de chamada" });
+    }
+  });
+
+  app.get("/api/attendance/shift/:shiftId", async (req, res) => {
+    try {
+      const { shiftId } = req.params;
+      const records = await storage.getAttendanceByShift(shiftId);
+      res.json(records);
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao buscar registros do turno" });
+    }
+  });
+
+  app.get("/api/attendance/shift/:shiftId/date/:date", async (req, res) => {
+    try {
+      const { shiftId, date } = req.params;
+      const records = await storage.getAttendanceByShiftAndDate(shiftId, date);
+      res.json(records);
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao buscar registros da data" });
+    }
+  });
+
+  app.get("/api/attendance/user/:userId", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const records = await storage.getAttendanceByUser(userId);
+      res.json(records);
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao buscar registros do usuário" });
+    }
+  });
+
+  app.post("/api/attendance", async (req, res) => {
+    try {
+      const recordData = insertAttendanceRecordSchema.parse(req.body);
+      const record = await storage.createAttendanceRecord(recordData);
+      res.status(201).json(record);
+    } catch (error) {
+      res.status(400).json({ message: "Dados inválidos" });
+    }
+  });
+
+  app.patch("/api/attendance/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const record = await storage.updateAttendanceRecord(id, req.body);
+      
+      if (!record) {
+        return res.status(404).json({ message: "Registro não encontrado" });
+      }
+
+      res.json(record);
+    } catch (error) {
+      res.status(400).json({ message: "Erro ao atualizar registro" });
+    }
+  });
+
+  app.delete("/api/attendance/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const deleted = await storage.deleteAttendanceRecord(id);
+      
+      if (!deleted) {
+        return res.status(404).json({ message: "Registro não encontrado" });
+      }
+
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao deletar registro" });
+    }
+  });
+
+  // Warning Routes
+  app.get("/api/warnings", async (req, res) => {
+    try {
+      const warnings = await storage.getAllWarnings();
+      res.json(warnings);
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao buscar advertências" });
+    }
+  });
+
+  app.get("/api/warnings/user/:userId", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const warnings = await storage.getWarningsByUser(userId);
+      res.json(warnings);
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao buscar advertências do usuário" });
+    }
+  });
+
+  app.get("/api/warnings/shift/:shiftId", async (req, res) => {
+    try {
+      const { shiftId } = req.params;
+      const warnings = await storage.getWarningsByShift(shiftId);
+      res.json(warnings);
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao buscar advertências do turno" });
+    }
+  });
+
+  app.post("/api/warnings", async (req, res) => {
+    try {
+      const warningData = insertWarningSchema.parse(req.body);
+      const warning = await storage.createWarning(warningData);
+      res.status(201).json(warning);
+    } catch (error) {
+      res.status(400).json({ message: "Dados inválidos" });
+    }
+  });
+
+  app.patch("/api/warnings/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const warning = await storage.updateWarning(id, req.body);
+      
+      if (!warning) {
+        return res.status(404).json({ message: "Advertência não encontrada" });
+      }
+
+      res.json(warning);
+    } catch (error) {
+      res.status(400).json({ message: "Erro ao atualizar advertência" });
+    }
+  });
+
+  app.delete("/api/warnings/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const deleted = await storage.deleteWarning(id);
+      
+      if (!deleted) {
+        return res.status(404).json({ message: "Advertência não encontrada" });
+      }
+
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ message: "Erro ao deletar advertência" });
     }
   });
 

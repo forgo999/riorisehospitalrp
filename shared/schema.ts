@@ -114,3 +114,59 @@ export const passwordValidationSchema = z.object({
 });
 
 export type PasswordValidation = z.infer<typeof passwordValidationSchema>;
+
+// Attendance (Chamada) Schema
+export const attendanceRecordSchema = z.object({
+  id: z.string(),
+  userId: z.string(),
+  shiftId: z.string(),
+  date: z.string(),
+  status: z.enum(["presente", "faltou"]),
+  notes: z.string().optional(),
+  createdAt: z.string(),
+  createdBy: z.string()
+});
+
+export const insertAttendanceRecordSchema = z.object({
+  userId: z.string(),
+  shiftId: z.string(),
+  date: z.string(),
+  status: z.enum(["presente", "faltou"]),
+  notes: z.string().optional(),
+  createdBy: z.string()
+});
+
+export type AttendanceRecord = z.infer<typeof attendanceRecordSchema>;
+export type InsertAttendanceRecord = z.infer<typeof insertAttendanceRecordSchema>;
+
+// Warning (Advertência) Schema
+export enum WarningOccurrenceType {
+  TURNO_PADRAO = "turno_padrao",
+  TURNO_EXTRA = "turno_extra",
+  FORA_TURNO = "fora_turno"
+}
+
+export const warningSchema = z.object({
+  id: z.string(),
+  userId: z.string(),
+  issuedBy: z.string(),
+  shiftId: z.string().nullable(),
+  reason: z.string(),
+  occurrenceType: z.nativeEnum(WarningOccurrenceType),
+  occurrenceDate: z.string(),
+  notes: z.string().optional(),
+  createdAt: z.string()
+});
+
+export const insertWarningSchema = z.object({
+  userId: z.string(),
+  issuedBy: z.string(),
+  shiftId: z.string().nullable(),
+  reason: z.string().min(1, "Motivo é obrigatório"),
+  occurrenceType: z.nativeEnum(WarningOccurrenceType),
+  occurrenceDate: z.string(),
+  notes: z.string().optional()
+});
+
+export type Warning = z.infer<typeof warningSchema>;
+export type InsertWarning = z.infer<typeof insertWarningSchema>;

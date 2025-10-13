@@ -8,7 +8,11 @@ import {
   type Rule,
   type InsertRule,
   type MeCommand,
-  type InsertMeCommand
+  type InsertMeCommand,
+  type AttendanceRecord,
+  type InsertAttendanceRecord,
+  type Warning,
+  type InsertWarning
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 import fs from "fs/promises";
@@ -20,6 +24,8 @@ const SHIFTS_FILE = path.join(DATA_DIR, "shifts.json");
 const COVENANTS_FILE = path.join(DATA_DIR, "covenants.json");
 const RULES_FILE = path.join(DATA_DIR, "rules.json");
 const ME_COMMANDS_FILE = path.join(DATA_DIR, "me-commands.json");
+const ATTENDANCE_FILE = path.join(DATA_DIR, "attendance.json");
+const WARNINGS_FILE = path.join(DATA_DIR, "warnings.json");
 
 async function ensureDataDir() {
   try {
@@ -85,6 +91,25 @@ export interface IStorage {
   createMeCommand(command: InsertMeCommand): Promise<MeCommand>;
   updateMeCommand(id: string, updates: Partial<MeCommand>): Promise<MeCommand | undefined>;
   deleteMeCommand(id: string): Promise<boolean>;
+
+  // Attendance
+  getAttendanceRecord(id: string): Promise<AttendanceRecord | undefined>;
+  getAllAttendanceRecords(): Promise<AttendanceRecord[]>;
+  getAttendanceByShift(shiftId: string): Promise<AttendanceRecord[]>;
+  getAttendanceByUser(userId: string): Promise<AttendanceRecord[]>;
+  getAttendanceByShiftAndDate(shiftId: string, date: string): Promise<AttendanceRecord[]>;
+  createAttendanceRecord(record: InsertAttendanceRecord): Promise<AttendanceRecord>;
+  updateAttendanceRecord(id: string, updates: Partial<AttendanceRecord>): Promise<AttendanceRecord | undefined>;
+  deleteAttendanceRecord(id: string): Promise<boolean>;
+
+  // Warnings
+  getWarning(id: string): Promise<Warning | undefined>;
+  getAllWarnings(): Promise<Warning[]>;
+  getWarningsByUser(userId: string): Promise<Warning[]>;
+  getWarningsByShift(shiftId: string): Promise<Warning[]>;
+  createWarning(warning: InsertWarning): Promise<Warning>;
+  updateWarning(id: string, updates: Partial<Warning>): Promise<Warning | undefined>;
+  deleteWarning(id: string): Promise<boolean>;
 }
 
 export class FileStorage implements IStorage {
@@ -332,6 +357,111 @@ export class FileStorage implements IStorage {
     const filtered = commands.filter(c => c.id !== id);
     if (filtered.length === commands.length) return false;
     await writeJSONFile(ME_COMMANDS_FILE, filtered);
+    return true;
+  }
+
+  // Attendance
+  async getAttendanceRecord(id: string): Promise<AttendanceRecord | undefined> {
+    const records = await readJSONFile<AttendanceRecord[]>(ATTENDANCE_FILE, []);
+    return records.find(r => r.id === id);
+  }
+
+  async getAllAttendanceRecords(): Promise<AttendanceRecord[]> {
+    return readJSONFile<AttendanceRecord[]>(ATTENDANCE_FILE, []);
+  }
+
+  async getAttendanceByShift(shiftId: string): Promise<AttendanceRecord[]> {
+    const records = await readJSONFile<AttendanceRecord[]>(ATTENDANCE_FILE, []);
+    return records.filter(r => r.shiftId === shiftId);
+  }
+
+  async getAttendanceByUser(userId: string): Promise<AttendanceRecord[]> {
+    const records = await readJSONFile<AttendanceRecord[]>(ATTENDANCE_FILE, []);
+    return records.filter(r => r.userId === userId);
+  }
+
+  async getAttendanceByShiftAndDate(shiftId: string, date: string): Promise<AttendanceRecord[]> {
+    const records = await readJSONFile<AttendanceRecord[]>(ATTENDANCE_FILE, []);
+    return records.filter(r => r.shiftId === shiftId && r.date === date);
+  }
+
+  async createAttendanceRecord(insertRecord: InsertAttendanceRecord): Promise<AttendanceRecord> {
+    const records = await readJSONFile<AttendanceRecord[]>(ATTENDANCE_FILE, []);
+    const record: AttendanceRecord = {
+      id: randomUUID(),
+      ...insertRecord,
+      createdAt: new Date().toISOString()
+    };
+    records.push(record);
+    await writeJSONFile(ATTENDANCE_FILE, records);
+    return record;
+  }
+
+  async updateAttendanceRecord(id: string, updates: Partial<AttendanceRecord>): Promise<AttendanceRecord | undefined> {
+    const records = await readJSONFile<AttendanceRecord[]>(ATTENDANCE_FILE, []);
+    const index = records.findIndex(r => r.id === id);
+    if (index === -1) return undefined;
+
+    records[index] = { ...records[index], ...updates };
+    await writeJSONFile(ATTENDANCE_FILE, records);
+    return records[index];
+  }
+
+  async deleteAttendanceRecord(id: string): Promise<boolean> {
+    const records = await readJSONFile<AttendanceRecord[]>(ATTENDANCE_FILE, []);
+    const filtered = records.filter(r => r.id !== id);
+    if (filtered.length === records.length) return false;
+    await writeJSONFile(ATTENDANCE_FILE, filtered);
+    return true;
+  }
+
+  // Warnings
+  async getWarning(id: string): Promise<Warning | undefined> {
+    const warnings = await readJSONFile<Warning[]>(WARNINGS_FILE, []);
+    return warnings.find(w => w.id === id);
+  }
+
+  async getAllWarnings(): Promise<Warning[]> {
+    return readJSONFile<Warning[]>(WARNINGS_FILE, []);
+  }
+
+  async getWarningsByUser(userId: string): Promise<Warning[]> {
+    const warnings = await readJSONFile<Warning[]>(WARNINGS_FILE, []);
+    return warnings.filter(w => w.userId === userId);
+  }
+
+  async getWarningsByShift(shiftId: string): Promise<Warning[]> {
+    const warnings = await readJSONFile<Warning[]>(WARNINGS_FILE, []);
+    return warnings.filter(w => w.shiftId === shiftId);
+  }
+
+  async createWarning(insertWarning: InsertWarning): Promise<Warning> {
+    const warnings = await readJSONFile<Warning[]>(WARNINGS_FILE, []);
+    const warning: Warning = {
+      id: randomUUID(),
+      ...insertWarning,
+      createdAt: new Date().toISOString()
+    };
+    warnings.push(warning);
+    await writeJSONFile(WARNINGS_FILE, warnings);
+    return warning;
+  }
+
+  async updateWarning(id: string, updates: Partial<Warning>): Promise<Warning | undefined> {
+    const warnings = await readJSONFile<Warning[]>(WARNINGS_FILE, []);
+    const index = warnings.findIndex(w => w.id === id);
+    if (index === -1) return undefined;
+
+    warnings[index] = { ...warnings[index], ...updates };
+    await writeJSONFile(WARNINGS_FILE, warnings);
+    return warnings[index];
+  }
+
+  async deleteWarning(id: string): Promise<boolean> {
+    const warnings = await readJSONFile<Warning[]>(WARNINGS_FILE, []);
+    const filtered = warnings.filter(w => w.id !== id);
+    if (filtered.length === warnings.length) return false;
+    await writeJSONFile(WARNINGS_FILE, filtered);
     return true;
   }
 }
