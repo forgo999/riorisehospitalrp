@@ -2,7 +2,7 @@
 
 ## Overview
 
-Hospital Rio Rise is a role-playing game management system for a fictional hospital. The application manages covenants (insurance agreements), shifts, rules, members, and role-playing commands ("/me" commands). It features role-based access control with five user levels: Director, Vice-Director, Surgeon, Therapist, and Member. The system includes real-time countdown timers for covenant expiration and password-protected administrative actions.
+Hospital Rio Rise is a role-playing game management system for a fictional hospital. The application manages covenants (insurance agreements), shifts, rules, members, attendance tracking, disciplinary warnings, and role-playing commands ("/me" commands). It features role-based access control with six user levels: Administrator, Director, Vice-Director, Surgeon, Therapist, and Member. The system includes real-time countdown timers for covenant expiration, attendance roll call management, warning issuance system, comprehensive admin panel, and password-protected administrative actions.
 
 ## User Preferences
 
@@ -49,7 +49,7 @@ Preferred communication style: Simple, everyday language.
 **Data Storage Pattern:**
 - File-based JSON storage with in-memory caching
 - Abstracted storage interface (IStorage) for future database migration
-- Five data files: users.json, shifts.json, covenants.json, rules.json, me-commands.json
+- Seven data files: users.json, shifts.json, covenants.json, rules.json, me-commands.json, attendance.json, warnings.json
 - Manual JSON file editing for data management (documented in CONFIGURACAO.md)
 
 **Business Logic:**
@@ -110,20 +110,38 @@ Preferred communication style: Simple, everyday language.
 - Type: "general" or "shift"
 - Optional shift association
 
+**AttendanceRecord Schema:**
+- User and shift association
+- Date-specific records with ISO 8601 timestamps
+- Status: "presente" (present), "ausente" (absent), "atrasado" (late)
+- Optional notes field
+- Created by (user ID) tracking
+
+**Warning Schema:**
+- User and shift association
+- Warning type: "leve" (minor), "media" (medium), "grave" (serious)
+- Title and detailed description
+- Issued by (user ID) tracking
+- Created/updated timestamps
+
 ### API Architecture
 
 **REST Endpoints:**
 - `/api/auth/*` - Authentication and password validation
-- `/api/users/*` - User management and queries
+- `/api/users/*` - User management and queries (includes DELETE)
 - `/api/shifts/*` - Shift management
 - `/api/covenants/*` - Covenant CRUD operations
 - `/api/rules/*` - Rules management with filtering
 - `/api/me-commands/*` - Role-play commands management
+- `/api/attendance/*` - Attendance tracking and roll call (shift/date filtered)
+- `/api/warnings/*` - Disciplinary warnings management (shift filtered)
 
 **Query Patterns:**
 - General resources: `/api/{resource}`
 - Shift-filtered: `/api/{resource}/shift/{shiftId}`
 - User-filtered: `/api/users/shift/{shiftId}`
+- Attendance date-filtered: `/api/attendance/shift/{shiftId}/date/{date}`
+- Warnings user-filtered: `/api/warnings/user/{userId}`
 
 **Error Handling:**
 - Centralized Express error middleware
@@ -206,3 +224,75 @@ Preferred communication style: Simple, everyday language.
 - Inter (weights: 300, 400, 500, 600, 700)
 - JetBrains Mono (weights: 400, 500, 600)
 - Preconnected to fonts.googleapis.com and fonts.gstatic.com
+
+## Recent Changes (October 13, 2025)
+
+### New Features Added
+
+**1. Attendance System (Chamada):**
+- Shift-specific daily roll call management
+- Date picker for selecting specific dates
+- Status tracking: Present, Absent, Late
+- Optional notes for each attendance record
+- Full CRUD operations with real-time cache invalidation
+- Access restricted to Vice-Directors, Directors, and Administrators
+- React Query cache properly invalidated using predicate pattern
+
+**2. Warnings System (Advertências):**
+- Disciplinary warning issuance and tracking
+- Three severity levels: Minor (Leve), Medium (Média), Serious (Grave)
+- Detailed descriptions and titles
+- Shift-specific filtering
+- Vice-Directors can issue warnings to any member
+- Full CRUD operations with shift-based permissions
+- Historical tracking of all warnings per user
+
+**3. Admin Panel (Administração):**
+- Comprehensive shift management interface
+- Bulk user operations (add/remove from shifts)
+- Vice-Director assignment per shift
+- System statistics and overview
+- User management with shift reassignment
+- Access restricted to Directors and Administrators
+- Password protection for sensitive operations
+
+**4. User Management Enhancements:**
+- Delete user functionality added to Members page
+- Confirmation dialogs for destructive operations
+- Access restricted to Directors and Administrators
+- Proper cache invalidation after deletion
+
+**5. UI/Navigation Updates:**
+- Sidebar navigation expanded with new menu items
+- Role-based menu item visibility
+- Icons added for new features (ClipboardCheck, AlertTriangle, Settings)
+- Conditional rendering based on user permissions
+
+### Technical Improvements
+
+**Cache Management:**
+- Fixed critical React Query cache invalidation bug in Attendance system
+- Implemented predicate-based invalidation to match specific query keys
+- Ensures UI reflects create/update/delete operations immediately
+
+**Deployment Configuration:**
+- Configured for VM deployment (always-running service)
+- Build and run scripts configured
+- Ready for Render hosting platform
+
+### File Structure Updates
+
+**New Frontend Pages:**
+- `client/src/pages/Attendance.tsx` - Attendance roll call interface
+- `client/src/pages/Warnings.tsx` - Warning management interface
+- `client/src/pages/Admin.tsx` - Administrative panel
+
+**Backend Updates:**
+- Extended `shared/schema.ts` with AttendanceRecord and Warning schemas
+- Enhanced `server/storage.ts` with new storage collections
+- Added comprehensive API routes in `server/routes.ts`
+- Created data files: `data/attendance.json` and `data/warnings.json`
+
+**Navigation Updates:**
+- Updated `client/src/App.tsx` with new route definitions
+- Enhanced `client/src/components/app-sidebar.tsx` with role-based menu filtering
