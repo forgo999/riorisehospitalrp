@@ -1,0 +1,56 @@
+[
+  {
+    "id": "0",
+    "accessCode": "3850",
+    "name": "Administrador",
+    "role": "administrador",
+    "shiftId": null,
+    "narniaName": "Admin",
+    "phone": "N/A"
+  },
+  {
+    "id": "1",
+    "accessCode": "meiamolemeioduro",
+    "name": "Dr. Dawi_Negreiros",
+    "role": "diretor",
+    "shiftId": null,
+    "narniaName": "N/A",
+    "phone": "N/A"
+  },
+  {
+    "id": "2",
+    "accessCode": "teste123",
+    "name": "Dra. Karollaine_Souza",
+    "role": "vice_diretor",
+    "shiftId": "shift-3",
+    "narniaName": "N/A",
+    "phone": "N/A"
+  },
+  {
+    "id": "3",
+    "accessCode": "CIR001",
+    "name": "n/a",
+    "role": "cirurgiao",
+    "shiftId": "shift-3",
+    "narniaName": "N/A",
+    "phone": "N/A"
+  },
+  {
+    "id": "4",
+    "accessCode": "TER001",
+    "name": "Dr. Morgan_Bevelaqua",
+    "role": "cirurgiao",
+    "shiftId": "shift-3",
+    "narniaName": "N/A",
+    "phone": "N/A"
+  },
+  {
+    "id": "5",
+    "accessCode": "MEM001",
+    "name": "teste",
+    "role": "membro",
+    "shiftId": "shift-1",
+    "narniaName": "teste",
+    "phone": "N/A"
+  }
+]
