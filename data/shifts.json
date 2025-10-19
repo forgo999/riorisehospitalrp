@@ -1,0 +1,44 @@
+[
+  {
+    "id": "shift-0",
+    "name": "08:00 - 11:00",
+    "viceDirectorId": "2",
+    "password": "manha123",
+    "createdAt": "2025-01-01T08:00:00.000Z"
+  },
+  {
+    "id": "shift-1",
+    "name": "11:00 - 13:00",
+    "viceDirectorId": "2",
+    "password": "181023",
+    "createdAt": "2025-01-01T08:00:00.000Z"
+  },
+  {
+    "id": "shift-2",
+    "name": "13:00 - 15:00",
+    "viceDirectorId": "2",
+    "password": "181023",
+    "createdAt": "2025-01-01T08:00:00.000Z"
+  },
+  {
+    "id": "shift-3",
+    "name": "15:00 - 18:00",
+    "viceDirectorId": "2",
+    "password": "2106Si",
+    "createdAt": "2025-01-01T14:00:00.000Z"
+  },
+  {
+    "id": "shift-4",
+    "name": "18:00 - 21:00",
+    "viceDirectorId": "2",
+    "password": "teste123",
+    "createdAt": "2025-01-01T20:00:00.000Z"
+  },
+  {
+    "id": "shift-5",
+    "name": "21:00 - 00:00",
+    "viceDirectorId": "2",
+    "password": "noite123",
+    "createdAt": "2025-01-01T20:00:00.000Z"
+  }
+]
