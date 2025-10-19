@@ -236,7 +236,7 @@ export default function MeCommands() {
           Comandos /me
         </h1>
         <p className="text-muted-foreground">
-          Organize e gerencie comandos de roleplay por categorias
+          Esteja pronto para todas as possiveis situações do hp
         </p>
       </div>
 
@@ -246,7 +246,7 @@ export default function MeCommands() {
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center gap-2">
                     <Folder className="h-5 w-5" />
-                    Categorias de Comandos /me
+                    Opções de /me
                   </CardTitle>
                   {canManage && (
                     <Dialog open={isCategoryDialogOpen} onOpenChange={setIsCategoryDialogOpen}>
